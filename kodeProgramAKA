@@ -1,0 +1,39 @@
+import time
+import matplotlib.pyplot as plt
+
+def kpr_iteratif(pinjaman, bunga, cicilan_pokok, n):
+    sisa = pinjaman
+    for _ in range(n):
+        bunga_bulan = sisa * bunga
+        cicilan = bunga_bulan + cicilan_pokok
+        sisa -= cicilan
+    return sisa
+
+def kpr_rekursif(pinjaman, bunga, cicilan_pokok, n):
+    if n == 0:
+        return pinjaman
+    bunga_bulan = pinjaman * bunga
+    cicilan = bunga_bulan + cicilan_pokok
+    return kpr_rekursif(pinjaman - cicilan, bunga, cicilan_pokok, n - 1)
+
+n_values = [10, 50, 100, 200, 300]
+iter_times = []
+rek_times = []
+
+for n in n_values:
+    start = time.time()
+    kpr_iteratif(1_000_000, 0.01, 10_000, n)
+    iter_times.append(time.time() - start)
+
+    start = time.time()
+    kpr_rekursif(1_000_000, 0.01, 10_000, n)
+    rek_times.append(time.time() - start)
+
+// kode visualisasi graf//
+
+plt.plot(n_values, iter_times)
+plt.plot(n_values, rek_times)
+plt.xlabel("Jumlah Periode (n)")
+plt.ylabel("Running Time (detik)")
+plt.title("Perbandingan Running Time Algoritma Iteratif dan Rekursif")
+plt.show()
