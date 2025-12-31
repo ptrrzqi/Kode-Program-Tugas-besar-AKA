@@ -1,5 +1,5 @@
 import time
-import matplotlib.pyplot as plt
+import sys
 
 def kpr_iteratif(pinjaman, bunga, cicilan_pokok, n):
     sisa = pinjaman
@@ -16,24 +16,41 @@ def kpr_rekursif(pinjaman, bunga, cicilan_pokok, n):
     cicilan = bunga_bulan + cicilan_pokok
     return kpr_rekursif(pinjaman - cicilan, bunga, cicilan_pokok, n - 1)
 
-n_values = [10, 50, 100, 200, 300]
-iter_times = []
-rek_times = []
+def main():
+    sys.setrecursionlimit(10000)
+    
+    n_values = [10, 50, 100, 200, 300]
+    iter_times = []
+    rek_times = []
+    
+    print("Perbandingan Waktu Eksekusi KPR Iteratif vs Rekursif")
+    print("=" * 60)
+    print(f"{'n':<10} {'Iteratif (s)':<15} {'Rekursif (s)':<15} {'Sisa Pinjaman':<15}")
+    print("-" * 60)
+    
+    for n in n_values:
+        # hitung iteratif
+        start = time.time()
+        sisa_iter = kpr_iteratif(1_000_000, 0.01, 10_000, n)
+        iter_time = time.time() - start
+        iter_times.append(iter_time)
+        
+        # hitung rekursif
+        start = time.time()
+        sisa_rek = kpr_rekursif(1_000_000, 0.01, 10_000, n)
+        rek_time = time.time() - start
+        rek_times.append(rek_time)
+        
+        print(f"{n:<10} {iter_time:<15.6f} {rek_time:<15.6f} {sisa_iter:<15.2f}")
+    
+    print("=" * 60)
+    
+    # analisis perbandingan
+    print("\nAnalisis:")
+    for i, n in enumerate(n_values):
+        if rek_times[i] > 0:
+            rasio = rek_times[i] / iter_times[i]
+            print(f"n={n}: Rekursif {rasio:.2f}x lebih {'lambat' if rasio > 1 else 'cepat'} dari Iteratif")
 
-for n in n_values:
-    start = time.time()
-    kpr_iteratif(1_000_000, 0.01, 10_000, n)
-    iter_times.append(time.time() - start)
-
-    start = time.time()
-    kpr_rekursif(1_000_000, 0.01, 10_000, n)
-    rek_times.append(time.time() - start)
-
-// kode visualisasi graf//
-
-plt.plot(n_values, iter_times)
-plt.plot(n_values, rek_times)
-plt.xlabel("Jumlah Periode (n)")
-plt.ylabel("Running Time (detik)")
-plt.title("Perbandingan Running Time Algoritma Iteratif dan Rekursif")
-plt.show()
+if __name__ == "__main__":
+    main()
